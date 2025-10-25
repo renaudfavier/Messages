@@ -66,25 +66,29 @@ private fun Content(
     innerPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) = with(uiModel) {
-    Column(Modifier.padding(innerPadding)) {
+    Box(Modifier.padding(innerPadding)) {
+        Column(Modifier.fillMaxSize()) {
+            ConversationMessageList(
+                messages,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 16.dp),
+            )
+            ConversationInputBar(
+                message = message,
+                onAnswerChange = { onAction(ConversationAction.MessageChanged(it)) },
+                onSendButtonTap = { onAction(ConversationAction.SendMessage(it)) },
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 8.dp)
+            )
+        }
         ConversationContactBadge(
             name = contactName,
             avatarRes = contactAvatar,
             modifier = Modifier
                 .padding(top = 16.dp)
-                .align(Alignment.CenterHorizontally)
-        )
-        ConversationMessageList(
-            messages,
-            modifier = Modifier.weight(1f),
-        )
-        ConversationInputBar(
-            message = message,
-            onAnswerChange = { onAction(ConversationAction.MessageChanged(it)) },
-            onSendButtonTap = { onAction(ConversationAction.SendMessage(it)) },
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .padding(bottom = 8.dp)
+                .align(Alignment.TopCenter)
         )
     }
 }

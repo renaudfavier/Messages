@@ -3,6 +3,7 @@ package com.renaudfavier.messages.chat.presentation.conversation.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,13 +31,13 @@ import kotlinx.collections.immutable.toPersistentList
 @Composable
 fun ConversationMessageList(
     items: PersistentList<ConversationListItemUiModel>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         reverseLayout = true,
+        contentPadding = PaddingValues(top = 80.dp, bottom = 12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.Bottom),
-        contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp)
     ) {
         items(
             items = items.asReversed(),
