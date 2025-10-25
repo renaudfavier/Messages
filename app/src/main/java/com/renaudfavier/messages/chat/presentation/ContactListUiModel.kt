@@ -1,9 +1,11 @@
 package com.renaudfavier.messages.chat.presentation
 
+import kotlinx.collections.immutable.PersistentList
+
 sealed interface ContactListUiModel {
     data object Loading: ContactListUiModel
     data class Content(
-        val contacts: List<ContactListItemUiModel>
+        val contacts: PersistentList<ContactListItemUiModel>
     ): ContactListUiModel
 }
 
