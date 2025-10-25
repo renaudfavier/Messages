@@ -4,7 +4,7 @@ import com.renaudfavier.messages.R
 import com.renaudfavier.messages.chat.presentation.contacts.model.ContactListItemUiModel
 import kotlinx.collections.immutable.persistentListOf
 
-val sampleContacts = persistentListOf(
+val sampleContactsListItemUiModel = persistentListOf(
     ContactListItemUiModel(
         contactId = 1,
         name = "Sarah Johnson",

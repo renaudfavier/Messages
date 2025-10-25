@@ -3,7 +3,7 @@ package com.renaudfavier.messages.chat.presentation.conversation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.renaudfavier.messages.R
-import com.renaudfavier.messages.chat.presentation.ContactId
+import com.renaudfavier.messages.core.domain.ContactId
 import com.renaudfavier.messages.chat.presentation.conversation.component.sampleMessages
 import com.renaudfavier.messages.chat.presentation.conversation.model.ConversationAction
 import dagger.assisted.Assisted

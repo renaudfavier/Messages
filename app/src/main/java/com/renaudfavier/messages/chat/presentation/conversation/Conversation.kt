@@ -13,7 +13,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -22,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.renaudfavier.messages.R
-import com.renaudfavier.messages.chat.presentation.ContactId
+import com.renaudfavier.messages.core.domain.ContactId
 import com.renaudfavier.messages.chat.presentation.conversation.component.ConversationContactBadge
 import com.renaudfavier.messages.chat.presentation.conversation.component.ConversationInputBar
 import com.renaudfavier.messages.chat.presentation.conversation.component.ConversationMessageList

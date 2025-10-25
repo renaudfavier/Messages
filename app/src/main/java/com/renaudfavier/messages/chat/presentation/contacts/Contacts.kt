@@ -26,9 +26,9 @@ import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.renaudfavier.messages.chat.presentation.ContactId
+import com.renaudfavier.messages.core.domain.ContactId
 import com.renaudfavier.messages.chat.presentation.contacts.component.ContactListItem
-import com.renaudfavier.messages.chat.presentation.contacts.component.sampleContacts
+import com.renaudfavier.messages.chat.presentation.contacts.component.sampleContactsListItemUiModel
 import com.renaudfavier.messages.chat.presentation.contacts.model.ContactListUiModel
 import com.renaudfavier.messages.core.ui.theme.MessagesTheme
 
@@ -120,7 +120,7 @@ private fun ContactsPrev() {
         Scaffold { innerPadding ->
             Content(
                 uiModel = ContactListUiModel.Content(
-                    contacts = sampleContacts
+                    contacts = sampleContactsListItemUiModel
                 ),
                 onItemClick = {},
                 innerPadding = innerPadding,

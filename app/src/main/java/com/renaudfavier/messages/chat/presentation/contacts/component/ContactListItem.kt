@@ -121,7 +121,7 @@ private fun ContactListItemPrev() {
                 .background(MaterialTheme.colorScheme.surface)
                 .padding(16.dp)
         ) {
-            sampleContacts.forEach {
+            sampleContactsListItemUiModel.forEach {
                 ContactListItem(it)
             }
         }

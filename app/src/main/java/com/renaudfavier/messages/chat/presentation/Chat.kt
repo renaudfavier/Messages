@@ -2,7 +2,6 @@
 
 package com.renaudfavier.messages.chat.presentation
 
-import android.os.Parcelable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -19,8 +18,8 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import com.renaudfavier.messages.chat.presentation.contacts.Contacts
 import com.renaudfavier.messages.chat.presentation.conversation.Conversation
+import com.renaudfavier.messages.core.domain.ContactId
 import kotlinx.coroutines.launch
-import kotlinx.parcelize.Parcelize
 
 @Composable
 fun Chat(
@@ -85,5 +84,3 @@ fun Chat(
     )
 }
 
-@Parcelize
-class ContactId(val id: Int) : Parcelable
