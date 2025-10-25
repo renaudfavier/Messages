@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -65,6 +66,7 @@ private fun Conversation(
     when(uiModel) {
         is ConversationUiModel.Content -> Content(uiModel, onAction, innerPadding, modifier)
         ConversationUiModel.Loading -> Loading(modifier = modifier)
+        is ConversationUiModel.Error -> Text(uiModel.message)
     }
 }
 

@@ -4,6 +4,7 @@ import kotlinx.collections.immutable.PersistentList
 
 sealed interface ConversationUiModel {
     data object Loading: ConversationUiModel
+    data class Error(val message: String): ConversationUiModel
     data class Content(
         val contactName: String,
         val contactAvatar: Int,
