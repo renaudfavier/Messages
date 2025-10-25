@@ -64,6 +64,7 @@ val sampleMessages = listOf(
     Message(42, 0.toContactId(), 1.toContactId(), Instant.now().minus(1, ChronoUnit.HOURS).minus(45, ChronoUnit.MINUTES), "This weekend?", false),
     Message(43, 1.toContactId(), 0.toContactId(), Instant.now().minus(25, ChronoUnit.MINUTES), "Perfect! Let's do it", true),
     Message(44, 1.toContactId(), 0.toContactId(), Instant.now().minus(24, ChronoUnit.MINUTES), "🍻", true),
+    Message(132, 1.toContactId(), 0.toContactId(), Instant.now().minus(24, ChronoUnit.MINUTES), "I'll bring my longbow", true),
 
     // Conversation with Peter (ContactId 2) - MODERATE - 15 messages spread over 2 months
     Message(45, 2.toContactId(), 0.toContactId(), Instant.now().minus(60, ChronoUnit.DAYS), "Hey! How's it going?", false),
@@ -161,7 +162,6 @@ val sampleMessages = listOf(
     Message(117, 3.toContactId(), 0.toContactId(), Instant.now().minus(1, ChronoUnit.DAYS).plus(31, ChronoUnit.MINUTES), "😊", false),
     Message(118, 0.toContactId(), 3.toContactId(), Instant.now().minus(1, ChronoUnit.DAYS).plus(45, ChronoUnit.MINUTES), "We should totally do this again", false),
     Message(119, 3.toContactId(), 0.toContactId(), Instant.now().minus(1, ChronoUnit.DAYS).plus(1, ChronoUnit.HOURS), "Absolutely! Best party planning team", false),
-    Message(120, 3.toContactId(), 0.toContactId(), Instant.now().minus(1, ChronoUnit.DAYS).plus(1, ChronoUnit.HOURS).plus(1, ChronoUnit.MINUTES), "🎉", false),
 
     // Conversation with Léa (ContactId 4) - SPARSE - Only 8 messages over 3 months
     Message(121, 4.toContactId(), 0.toContactId(), Instant.now().minus(90, ChronoUnit.DAYS), "Salut! Ça fait longtemps!", false),
@@ -173,6 +173,6 @@ val sampleMessages = listOf(
 
     Message(127, 4.toContactId(), 0.toContactId(), Instant.now().minus(35, ChronoUnit.DAYS), "I'll be there from the 15th to the 20th", false),
     Message(128, 0.toContactId(), 4.toContactId(), Instant.now().minus(34, ChronoUnit.DAYS).minus(18, ChronoUnit.HOURS), "Noted! Looking forward to it", false),
-    Message(129, 4.toContactId(), 0.toContactId(), Instant.now().minus(34, ChronoUnit.DAYS).minus(16, ChronoUnit.HOURS), "Me too!", false),
-    Message(130, 4.toContactId(), 0.toContactId(), Instant.now().minus(34, ChronoUnit.DAYS).minus(16, ChronoUnit.HOURS).plus(1, ChronoUnit.MINUTES), "😊", false),
+    Message(129, 4.toContactId(), 0.toContactId(), Instant.now().minus(34, ChronoUnit.DAYS).minus(16, ChronoUnit.HOURS).plus(1, ChronoUnit.MINUTES), "Me too!", false),
+    Message(130, 4.toContactId(), 0.toContactId(), Instant.now().minus(34, ChronoUnit.DAYS).minus(16, ChronoUnit.HOURS), "😊", false),
 )

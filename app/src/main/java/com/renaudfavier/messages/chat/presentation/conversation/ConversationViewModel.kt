@@ -25,7 +25,11 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import kotlin.random.Random
+import com.renaudfavier.messages.chat.presentation.conversation.model.ConversationListItemUiModel
 import com.renaudfavier.messages.chat.presentation.conversation.model.ConversationUiModel as UiModel
 
 @HiltViewModel(assistedFactory = ConversationViewModel.Factory::class)
@@ -66,9 +70,17 @@ class ConversationViewModel @AssistedInject constructor(
                     contactName = contact.name,
                     contactAvatar = R.drawable.ic_launcher_foreground,
                     message = "",
-                    messages = messages.map { message: Message ->
-                        mapper.map(message)
-                    }.toPersistentList()
+                    messages = messages
+                        .groupBy { it.date.atZone(ZoneId.systemDefault()).toLocalDate() }
+                        .flatMap { (date, messagesForDay) ->
+                            buildList {
+                                add(mapper.map(date))
+                                addAll(messagesForDay.map { message ->
+                                    mapper.map(message)
+                                })
+                            }
+                        }
+                        .toPersistentList()
                 )
             }
             .catch { e -> _uiState.value = UiModel.Error(e.message ?: "Unknown error") }

@@ -3,6 +3,8 @@ package com.renaudfavier.messages.chat.presentation.conversation.mapper
 import com.renaudfavier.messages.chat.domain.Message
 import com.renaudfavier.messages.chat.presentation.conversation.model.ConversationListItemUiModel
 import com.renaudfavier.messages.core.domain.toContactId
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 class ConversationListItemMapper @Inject constructor() {
@@ -12,6 +14,11 @@ class ConversationListItemMapper @Inject constructor() {
             else -> mapMessage(message)
         }
     }
+
+    fun map(date: LocalDate) = ConversationListItemUiModel.TimeUiModel(
+        id = "date_${date}",
+        text = formatDate(date)
+    )
 
     private fun mapMessage(message: Message) =
         ConversationListItemUiModel.MessageUiModel.TextMessage(
@@ -47,6 +54,27 @@ class ConversationListItemMapper @Inject constructor() {
             codePoint == 0xFE0F ||  // Variation selector
             codePoint in 0x1F000..0x1FFFF ||  // Emoji blocks
             codePoint in 0x2600..0x27BF     // Miscellaneous symbols
+        }
+    }
+
+    private fun formatDate(date: LocalDate): String {
+        val today = LocalDate.now()
+        val yesterday = today.minusDays(1)
+
+        return when (date) {
+            today -> "Today"
+            yesterday -> "Yesterday"
+            else -> {
+                // For older dates, show the formatted date
+                val daysAgo = java.time.temporal.ChronoUnit.DAYS.between(date, today)
+                if (daysAgo < 7) {
+                    // Within the past week, show day of week
+                    date.format(DateTimeFormatter.ofPattern("EEEE"))
+                } else {
+                    // Older than a week, show full date
+                    date.format(DateTimeFormatter.ofPattern("MMMM d, yyyy"))
+                }
+            }
         }
     }
 }
