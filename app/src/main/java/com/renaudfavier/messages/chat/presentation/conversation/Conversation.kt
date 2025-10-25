@@ -7,13 +7,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -22,14 +25,15 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.renaudfavier.messages.R
-import com.renaudfavier.messages.core.domain.ContactId
 import com.renaudfavier.messages.chat.presentation.conversation.component.ConversationContactBadge
 import com.renaudfavier.messages.chat.presentation.conversation.component.ConversationInputBar
 import com.renaudfavier.messages.chat.presentation.conversation.component.ConversationMessageList
 import com.renaudfavier.messages.chat.presentation.conversation.component.sampleMessages
 import com.renaudfavier.messages.chat.presentation.conversation.model.ConversationAction
 import com.renaudfavier.messages.chat.presentation.conversation.model.ConversationUiModel
+import com.renaudfavier.messages.core.domain.ContactId
 import com.renaudfavier.messages.core.ui.theme.MessagesTheme
+import kotlinx.coroutines.launch
 
 @Composable
 fun Conversation(
@@ -77,10 +81,23 @@ private fun Content(
     innerPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) = with(uiModel) {
-    Box(Modifier.padding(innerPadding)) {
+    val listState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+
+    // Auto-scroll to newest message when messages change
+    LaunchedEffect(messages.size) {
+        if (messages.isNotEmpty()) {
+            coroutineScope.launch {
+                listState.animateScrollToItem(0)
+            }
+        }
+    }
+
+    Box(modifier.padding(innerPadding)) {
         Column(Modifier.fillMaxSize()) {
             ConversationMessageList(
                 messages,
+                listState = listState,
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 16.dp),
