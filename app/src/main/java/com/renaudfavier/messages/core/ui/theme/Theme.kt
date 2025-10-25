@@ -1,7 +1,9 @@
 package com.renaudfavier.messages.core.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MotionScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
@@ -31,6 +33,7 @@ private val LightColorScheme = lightColorScheme(
     onBackground = OnBackgroundLight,
     onSurface = OnSurfaceLight
 )
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun MessagesTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -44,6 +47,7 @@ fun MessagesTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
+        motionScheme = MotionScheme.expressive(),
         content = content
     )
 }

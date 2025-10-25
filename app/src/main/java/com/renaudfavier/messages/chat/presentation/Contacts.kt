@@ -1,34 +1,119 @@
 package com.renaudfavier.messages.chat.presentation
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.ListItem
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularWavyProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
+import androidx.compose.ui.unit.dp
+import com.renaudfavier.messages.chat.presentation.component.ContactListItem
+import com.renaudfavier.messages.chat.presentation.component.sampleContacts
+import com.renaudfavier.messages.core.ui.theme.MessagesTheme
 
 @Composable
 fun Contacts(
+    uiModel: ContactListUiModel,
     onItemClick: (ContactId) -> Unit,
+    innerPadding: PaddingValues,
+    modifier: Modifier = Modifier,
 ) {
-    LazyColumn {
-        listOf(1,2,3,4).forEach { id ->
-            item {
-                ListItem(
-                    modifier = Modifier
-                        .background(Color.Magenta)
-                        .clickable {
-                            onItemClick(ContactId(id))
-                        },
-                    headlineContent = {
-                        Text(
-                            text = "user with id $id",
-                        )
-                    },
-                )
-            }
+    when (uiModel) {
+        is ContactListUiModel.Content -> Content(uiModel, onItemClick, innerPadding, modifier)
+        ContactListUiModel.Loading -> Loading(modifier)
+    }
+}
+
+@Composable
+fun Content(
+    uiModel: ContactListUiModel.Content,
+    onItemClick: (ContactId) -> Unit,
+    innerPadding: PaddingValues,
+    modifier: Modifier = Modifier
+) {
+    val layoutDirection = LocalLayoutDirection.current
+    val combinedPadding = PaddingValues(
+        start = innerPadding.calculateStartPadding(layoutDirection) + 24.dp,
+        top = innerPadding.calculateTopPadding() + 24.dp,
+        end = innerPadding.calculateEndPadding(layoutDirection) + 24.dp,
+        bottom = innerPadding.calculateBottomPadding()
+    )
+
+    LazyColumn(
+        modifier = modifier,
+        contentPadding = combinedPadding,
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        item {
+            Text(
+                text = "chat",
+                modifier = modifier.padding(bottom = 16.dp),
+                style = MaterialTheme.typography.displayMedium
+            )
+        }
+        items(items = uiModel.contacts) {
+            ContactListItem(
+                contact = it,
+                modifier = Modifier.clickable {
+                    onItemClick(ContactId(it.contactId))
+                }
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun Loading(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularWavyProgressIndicator()
+    }
+}
+
+@PreviewLightDark
+@PreviewScreenSizes
+@Composable
+private fun ContactsPrev() {
+    MessagesTheme {
+        Scaffold { innerPadding ->
+            Contacts(
+                uiModel = ContactListUiModel.Content(
+                    contacts = sampleContacts),
+                onItemClick = {},
+                innerPadding = innerPadding,
+            )
+        }
+    }
+}
+
+@PreviewScreenSizes
+@Composable
+private fun ContactsLoadingPrev() {
+    MessagesTheme {
+        Scaffold { innerPadding ->
+            Contacts(
+                uiModel = ContactListUiModel.Loading,
+                onItemClick = {},
+                innerPadding = innerPadding,
+            )
         }
     }
 }
