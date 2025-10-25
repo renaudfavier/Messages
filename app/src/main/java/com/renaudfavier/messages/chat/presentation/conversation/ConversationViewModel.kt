@@ -108,7 +108,7 @@ class ConversationViewModel @AssistedInject constructor(
                     recipient = contactId,
                     date = Instant.now(),
                     content = action.message,
-                    isUnread = true
+                    isUnread = false
                 )
             )
 
