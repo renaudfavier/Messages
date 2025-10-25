@@ -7,16 +7,20 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.renaudfavier.messages.R
 import com.renaudfavier.messages.chat.presentation.ContactId
 import com.renaudfavier.messages.chat.presentation.conversation.component.ConversationContactBadge
@@ -26,24 +30,30 @@ import com.renaudfavier.messages.chat.presentation.conversation.component.sample
 import com.renaudfavier.messages.chat.presentation.conversation.model.ConversationAction
 import com.renaudfavier.messages.chat.presentation.conversation.model.ConversationUiModel
 import com.renaudfavier.messages.core.ui.theme.MessagesTheme
-import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun Conversation(
-    item: ContactId,
+    contactId: ContactId,
     innerPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
+    key(contactId) {
+        val viewModel = hiltViewModel(
+            key = "${contactId.id}",
+            creationCallback = { factory: ConversationViewModel.Factory ->
+                factory.create(contactId)
+            }
+        )
 
-    val uiModel = ConversationUiModel.Content(
-        contactName = "John",
-        contactAvatar = R.drawable.ic_launcher_foreground,
-        message = "",
-        messages = sampleMessages
-    )
-    val onAction: (ConversationAction) -> Unit = {}
+        val uiModel by viewModel.uiState.collectAsStateWithLifecycle()
 
-    Conversation(uiModel, onAction, innerPadding, modifier)
+        Conversation(
+            uiModel = uiModel,
+            onAction = viewModel::onAction,
+            innerPadding = innerPadding,
+            modifier = modifier
+        )
+    }
 }
 
 @Composable

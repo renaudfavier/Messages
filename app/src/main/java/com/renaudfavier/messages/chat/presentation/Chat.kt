@@ -75,7 +75,7 @@ fun Chat(
                         }
 
                     Conversation(
-                        item = it,
+                        contactId = it,
                         innerPadding = detailPadding
                     )
                 }
