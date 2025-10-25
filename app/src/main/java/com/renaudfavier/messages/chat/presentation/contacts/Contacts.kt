@@ -1,5 +1,6 @@
 package com.renaudfavier.messages.chat.presentation.contacts
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,12 +17,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.renaudfavier.messages.chat.presentation.ContactId
 import com.renaudfavier.messages.chat.presentation.contacts.component.ContactListItem
 import com.renaudfavier.messages.chat.presentation.contacts.component.sampleContacts
@@ -30,13 +34,31 @@ import com.renaudfavier.messages.core.ui.theme.MessagesTheme
 
 @Composable
 fun Contacts(
-    uiModel: ContactListUiModel,
     onItemClick: (ContactId) -> Unit,
+    innerPadding: PaddingValues,
+    modifier: Modifier = Modifier,
+
+    ) {
+    val viewModel: ContactsViewModel = hiltViewModel()
+    val uiModel by viewModel.uiState.collectAsStateWithLifecycle()
+
+    Contacts(
+        uiModel = uiModel,
+        onContactClick = { onItemClick(ContactId(it)) },
+        innerPadding,
+        modifier
+    )
+}
+
+@Composable
+private fun Contacts(
+    uiModel: ContactListUiModel,
+    onContactClick: (Int) -> Unit,
     innerPadding: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
     when (uiModel) {
-        is ContactListUiModel.Content -> Content(uiModel, onItemClick, innerPadding, modifier)
+        is ContactListUiModel.Content -> Content(uiModel, onContactClick, innerPadding, modifier)
         ContactListUiModel.Loading -> Loading(modifier)
     }
 }
@@ -44,7 +66,7 @@ fun Contacts(
 @Composable
 fun Content(
     uiModel: ContactListUiModel.Content,
-    onItemClick: (ContactId) -> Unit,
+    onItemClick: (Int) -> Unit,
     innerPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
@@ -72,7 +94,7 @@ fun Content(
             ContactListItem(
                 contact = it,
                 modifier = Modifier.clickable {
-                    onItemClick(ContactId(it.contactId))
+                    onItemClick(it.contactId)
                 }
             )
         }
@@ -96,9 +118,10 @@ private fun Loading(modifier: Modifier = Modifier) {
 private fun ContactsPrev() {
     MessagesTheme {
         Scaffold { innerPadding ->
-            Contacts(
+            Content(
                 uiModel = ContactListUiModel.Content(
-                    contacts = sampleContacts),
+                    contacts = sampleContacts
+                ),
                 onItemClick = {},
                 innerPadding = innerPadding,
             )
@@ -106,16 +129,13 @@ private fun ContactsPrev() {
     }
 }
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @PreviewScreenSizes
 @Composable
 private fun ContactsLoadingPrev() {
     MessagesTheme {
-        Scaffold { innerPadding ->
-            Contacts(
-                uiModel = ContactListUiModel.Loading,
-                onItemClick = {},
-                innerPadding = innerPadding,
-            )
+        Scaffold {
+            Loading()
         }
     }
 }

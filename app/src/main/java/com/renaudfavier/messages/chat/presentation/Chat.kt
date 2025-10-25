@@ -18,8 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import com.renaudfavier.messages.chat.presentation.contacts.Contacts
-import com.renaudfavier.messages.chat.presentation.contacts.component.sampleContacts
-import com.renaudfavier.messages.chat.presentation.contacts.model.ContactListUiModel
 import com.renaudfavier.messages.chat.presentation.conversation.Conversation
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
@@ -49,7 +47,6 @@ fun Chat(
                     }
 
                 Contacts(
-                    uiModel = ContactListUiModel.Content(sampleContacts),
                     onItemClick = { item ->
                         scope.launch {
                             scaffoldNavigator.navigateTo(
