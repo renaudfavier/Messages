@@ -1,6 +1,5 @@
 package com.renaudfavier.messages.chat.presentation.contacts.mapper
 
-import com.renaudfavier.messages.R
 import com.renaudfavier.messages.chat.domain.ConversationSummary
 import com.renaudfavier.messages.chat.presentation.contacts.model.ContactListItemUiModel
 import java.time.format.DateTimeFormatter
@@ -15,11 +14,11 @@ class ContactListUiModelMapper @Inject constructor() {
 
     private fun map(summary: ConversationSummary): ContactListItemUiModel {
         return ContactListItemUiModel(
-            contactId = summary.contactId,
-            name = summary.contactName,
+            contactId = summary.contact.id,
+            name = summary.contact.name,
             lastMessage = summary.lastMessage.content,
             lastMessageTime = formatDate(summary.lastMessage.date),
-            avatarRes = R.drawable.ic_launcher_foreground,
+            avatarRes = summary.contact.avatar,
             isUnread = summary.lastMessage.isUnread
         )
     }

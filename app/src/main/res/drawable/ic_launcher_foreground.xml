@@ -4,16 +4,18 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <path android:pathData="M31,63.928c0,0 6.4,-11 12.1,-13.1c7.2,-2.6 26,-1.4 26,-1.4l38.1,38.1L107,108.928l-32,-1L31,63.928z">
+
+    <!-- Shadow/depth effect -->
+    <path android:pathData="M32,45 Q32,38 38,38 L70,38 Q76,38 76,45 L76,62 Q76,68 70,68 L50,68 L38,78 L38,68 Q32,68 32,62 Z">
         <aapt:attr name="android:fillColor">
             <gradient
-                android:endX="85.84757"
-                android:endY="92.4963"
-                android:startX="42.9492"
-                android:startY="49.59793"
+                android:endX="76"
+                android:endY="78"
+                android:startX="32"
+                android:startY="38"
                 android:type="linear">
                 <item
-                    android:color="#44000000"
+                    android:color="#33000000"
                     android:offset="0.0" />
                 <item
                     android:color="#00000000"
@@ -21,10 +23,34 @@
             </gradient>
         </aapt:attr>
     </path>
+
+    <!-- Main chat bubble -->
     <path
         android:fillColor="#FFFFFF"
         android:fillType="nonZero"
-        android:pathData="M65.3,45.828l3.8,-6.6c0.2,-0.4 0.1,-0.9 -0.3,-1.1c-0.4,-0.2 -0.9,-0.1 -1.1,0.3l-3.9,6.7c-6.3,-2.8 -13.4,-2.8 -19.7,0l-3.9,-6.7c-0.2,-0.4 -0.7,-0.5 -1.1,-0.3C38.8,38.328 38.7,38.828 38.9,39.228l3.8,6.6C36.2,49.428 31.7,56.028 31,63.928h46C76.3,56.028 71.8,49.428 65.3,45.828zM43.4,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2c-0.3,-0.7 -0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C45.3,56.528 44.5,57.328 43.4,57.328L43.4,57.328zM64.6,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2s-0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C66.5,56.528 65.6,57.328 64.6,57.328L64.6,57.328z"
+        android:pathData="M30,42 Q30,35 37,35 L71,35 Q78,35 78,42 L78,60 Q78,67 71,67 L49,67 L36,78 L36,67 Q30,67 30,60 Z"
+        android:strokeWidth="1"
+        android:strokeColor="#00000000" />
+
+    <!-- Typing dots -->
+    <path
+        android:fillColor="#0FB6FF"
+        android:fillType="nonZero"
+        android:pathData="M44,51 C44,48.8 45.8,47 48,47 C50.2,47 52,48.8 52,51 C52,53.2 50.2,55 48,55 C45.8,55 44,53.2 44,51 Z"
+        android:strokeWidth="1"
+        android:strokeColor="#00000000" />
+
+    <path
+        android:fillColor="#0FB6FF"
+        android:fillType="nonZero"
+        android:pathData="M52,51 C52,48.8 53.8,47 56,47 C58.2,47 60,48.8 60,51 C60,53.2 58.2,55 56,55 C53.8,55 52,53.2 52,51 Z"
+        android:strokeWidth="1"
+        android:strokeColor="#00000000" />
+
+    <path
+        android:fillColor="#0FB6FF"
+        android:fillType="nonZero"
+        android:pathData="M60,51 C60,48.8 61.8,47 64,47 C66.2,47 68,48.8 68,51 C68,53.2 66.2,55 64,55 C61.8,55 60,53.2 60,51 Z"
         android:strokeWidth="1"
         android:strokeColor="#00000000" />
 </vector>

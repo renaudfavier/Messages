@@ -10,5 +10,6 @@ fun Int.toContactId() = ContactId(this)
 data class Contact(
     val id: ContactId,
     val name: String,
+    val avatar: Int,
 )
 

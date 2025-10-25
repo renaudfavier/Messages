@@ -68,7 +68,7 @@ class ConversationViewModel @AssistedInject constructor(
             .map { messages ->
                 UiModel.Content(
                     contactName = contact.name,
-                    contactAvatar = R.drawable.ic_launcher_foreground,
+                    contactAvatar = contact.avatar,
                     message = "",
                     messages = messages
                         .groupBy { it.date.atZone(ZoneId.systemDefault()).toLocalDate() }
