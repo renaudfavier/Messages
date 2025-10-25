@@ -21,12 +21,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color.Companion.Transparent
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
@@ -45,8 +45,9 @@ fun ConversationInputBar(
     modifier: Modifier = Modifier,
 ) {
     val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
-    var textFieldValue by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+    var textFieldValue by remember(message) {
         mutableStateOf(
             TextFieldValue(
                 text = message,
@@ -76,6 +77,7 @@ fun ConversationInputBar(
                 onClick = {
                     onSendButtonTap(message)
                     focusRequester.freeFocus()
+                    keyboardController?.hide()
                 }
             ) {
                 Icon(
@@ -95,6 +97,7 @@ fun ConversationInputBar(
         keyboardActions = KeyboardActions {
             onSendButtonTap(message)
             focusRequester.freeFocus()
+            keyboardController?.hide()
         },
         modifier = modifier
             .fillMaxWidth()
