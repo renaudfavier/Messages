@@ -44,7 +44,7 @@ fun Contacts(
 
     Contacts(
         uiModel = uiModel,
-        onContactClick = { onItemClick(ContactId(it)) },
+        onContactClick = { onItemClick(it) },
         innerPadding,
         modifier
     )
@@ -53,20 +53,21 @@ fun Contacts(
 @Composable
 private fun Contacts(
     uiModel: ContactListUiModel,
-    onContactClick: (Int) -> Unit,
+    onContactClick: (ContactId) -> Unit,
     innerPadding: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
     when (uiModel) {
         is ContactListUiModel.Content -> Content(uiModel, onContactClick, innerPadding, modifier)
         ContactListUiModel.Loading -> Loading(modifier)
+        is ContactListUiModel.Error -> Text(uiModel.message)
     }
 }
 
 @Composable
 fun Content(
     uiModel: ContactListUiModel.Content,
-    onItemClick: (Int) -> Unit,
+    onItemClick: (ContactId) -> Unit,
     innerPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {

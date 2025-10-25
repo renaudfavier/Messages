@@ -2,11 +2,12 @@ package com.renaudfavier.messages.chat.presentation.contacts.component
 
 import com.renaudfavier.messages.R
 import com.renaudfavier.messages.chat.presentation.contacts.model.ContactListItemUiModel
+import com.renaudfavier.messages.core.domain.toContactId
 import kotlinx.collections.immutable.persistentListOf
 
 val sampleContactsListItemUiModel = persistentListOf(
     ContactListItemUiModel(
-        contactId = 1,
+        contactId = 1.toContactId(),
         name = "Sarah Johnson",
         lastMessage = "See you tomorrow!",
         lastMessageTime = "10:30 AM",
@@ -14,7 +15,7 @@ val sampleContactsListItemUiModel = persistentListOf(
         isUnread = true
     ),
     ContactListItemUiModel(
-        contactId = 2,
+        contactId = 2.toContactId(),
         name = "Mike Chen",
         lastMessage = "Thanks for the update 👍",
         lastMessageTime = "9:15 AM",
@@ -22,7 +23,7 @@ val sampleContactsListItemUiModel = persistentListOf(
         isUnread = false
     ),
     ContactListItemUiModel(
-        contactId = 3,
+        contactId = 3.toContactId(),
         name = "Emily Rodriguez",
         lastMessage = "Can we schedule a meeting?",
         lastMessageTime = "Yesterday",
@@ -30,7 +31,7 @@ val sampleContactsListItemUiModel = persistentListOf(
         isUnread = true
     ),
     ContactListItemUiModel(
-        contactId = 4,
+        contactId = 4.toContactId(),
         name = "James Wilson",
         lastMessage = "Perfect, that works for me",
         lastMessageTime = "Yesterday",
@@ -38,7 +39,7 @@ val sampleContactsListItemUiModel = persistentListOf(
         isUnread = false
     ),
     ContactListItemUiModel(
-        contactId = 5,
+        contactId = 5.toContactId(),
         name = "Alex Kim",
         lastMessage = "Did you see the latest design mockups?",
         lastMessageTime = "Tuesday",
@@ -46,7 +47,7 @@ val sampleContactsListItemUiModel = persistentListOf(
         isUnread = false
     ),
     ContactListItemUiModel(
-        contactId = 6,
+        contactId = 6.toContactId(),
         name = "Maria Garcia",
         lastMessage = "Great job on the presentation!",
         lastMessageTime = "Monday",
@@ -54,7 +55,7 @@ val sampleContactsListItemUiModel = persistentListOf(
         isUnread = false
     ),
     ContactListItemUiModel(
-        contactId = 7,
+        contactId = 7.toContactId(),
         name = "David Lee",
         lastMessage = "Let's catch up soon",
         lastMessageTime = "Last week",
@@ -62,7 +63,7 @@ val sampleContactsListItemUiModel = persistentListOf(
         isUnread = false
     ),
     ContactListItemUiModel(
-        contactId = 8,
+        contactId = 8.toContactId(),
         name = "Sophie Martin",
         lastMessage = "Happy birthday! 🎉",
         lastMessageTime = "Last week",
