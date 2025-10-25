@@ -89,7 +89,7 @@ fun ConversationInputBar(
                 )
             }
         },
-        shape = RoundedCornerShape(44.dp),
+        shape = RoundedCornerShape(100),
         colors = TextFieldDefaults.colors(
             focusedIndicatorColor = Transparent,
             unfocusedIndicatorColor = Transparent,

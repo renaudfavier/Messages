@@ -21,6 +21,8 @@ import com.renaudfavier.messages.R
 import com.renaudfavier.messages.chat.presentation.ContactId
 import com.renaudfavier.messages.chat.presentation.conversation.component.ConversationContactBadge
 import com.renaudfavier.messages.chat.presentation.conversation.component.ConversationInputBar
+import com.renaudfavier.messages.chat.presentation.conversation.component.ConversationMessageList
+import com.renaudfavier.messages.chat.presentation.conversation.component.sampleMessages
 import com.renaudfavier.messages.chat.presentation.conversation.model.ConversationAction
 import com.renaudfavier.messages.chat.presentation.conversation.model.ConversationUiModel
 import com.renaudfavier.messages.core.ui.theme.MessagesTheme
@@ -37,7 +39,7 @@ fun Conversation(
         contactName = "John",
         contactAvatar = R.drawable.ic_launcher_foreground,
         message = "",
-        messages = persistentListOf()
+        messages = sampleMessages
     )
     val onAction: (ConversationAction) -> Unit = {}
 
@@ -72,7 +74,10 @@ private fun Content(
                 .padding(top = 16.dp)
                 .align(Alignment.CenterHorizontally)
         )
-        LazyColumn(Modifier.weight(1f)) {  }
+        ConversationMessageList(
+            messages,
+            modifier = Modifier.weight(1f),
+        )
         ConversationInputBar(
             message = message,
             onAnswerChange = { onAction(ConversationAction.MessageChanged(it)) },
@@ -105,7 +110,7 @@ private fun ConversationContentPrev() {
                     contactName = "John",
                     contactAvatar = R.drawable.ic_launcher_foreground,
                     message = "",
-                    messages = persistentListOf()
+                    messages = sampleMessages
                 ),
                 onAction = {},
                 innerPadding = innerPadding
