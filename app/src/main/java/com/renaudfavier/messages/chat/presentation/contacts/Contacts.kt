@@ -86,7 +86,7 @@ fun Content(
     ) {
         item {
             Text(
-                text = "chat",
+                text = "chats",
                 modifier = modifier.padding(bottom = 16.dp),
                 style = MaterialTheme.typography.displayMedium
             )

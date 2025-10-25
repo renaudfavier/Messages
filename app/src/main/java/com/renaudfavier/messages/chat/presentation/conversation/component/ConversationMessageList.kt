@@ -69,7 +69,7 @@ private fun TimeItem(item: TimeUiModel) {
         Text(
             text = item.text,
             style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.outline
         )
     }
 }
@@ -86,7 +86,7 @@ private fun TextMessageItem(item: TextMessage) {
 
     Box(
         modifier = Modifier
-            .background(backgroundColor, shape = RoundedCornerShape(100))
+            .background(backgroundColor, shape = RoundedCornerShape(16.dp))
             .padding(horizontal = 16.dp, vertical = 10.dp)
     ) {
         Text(
