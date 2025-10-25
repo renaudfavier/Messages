@@ -4,17 +4,22 @@ package com.renaudfavier.messages.chat.presentation
 
 import android.os.Parcelable
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
+import androidx.compose.material3.adaptive.layout.PaneAdaptedValue
 import androidx.compose.material3.adaptive.navigation.NavigableListDetailPaneScaffold
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import com.renaudfavier.messages.chat.presentation.contacts.model.ContactListUiModel
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.dp
 import com.renaudfavier.messages.chat.presentation.contacts.Contacts
 import com.renaudfavier.messages.chat.presentation.contacts.component.sampleContacts
+import com.renaudfavier.messages.chat.presentation.contacts.model.ContactListUiModel
 import com.renaudfavier.messages.chat.presentation.conversation.Conversation
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
@@ -31,6 +36,18 @@ fun Chat(
         navigator = scaffoldNavigator,
         listPane = {
             AnimatedPane {
+                val isListFullScreen = scaffoldNavigator.scaffoldValue.secondary == PaneAdaptedValue.Hidden
+                val listPadding =
+                    if (isListFullScreen) { innerPadding }
+                    else {
+                        PaddingValues(
+                            start = innerPadding.calculateStartPadding(LocalLayoutDirection.current),
+                            top = innerPadding.calculateTopPadding(),
+                            end = 0.dp,
+                            bottom = innerPadding.calculateBottomPadding()
+                        )
+                    }
+
                 Contacts(
                     uiModel = ContactListUiModel.Content(sampleContacts),
                     onItemClick = { item ->
@@ -41,16 +58,28 @@ fun Chat(
                             )
                         }
                     },
-                    innerPadding = innerPadding,
+                    innerPadding = listPadding,
                 )
             }
         },
         detailPane = {
             AnimatedPane {
                 scaffoldNavigator.currentDestination?.contentKey?.let {
+                    val isDetailsFullScreen = scaffoldNavigator.scaffoldValue.primary == PaneAdaptedValue.Hidden
+                    val detailPadding =
+                        if(isDetailsFullScreen) { innerPadding }
+                        else {
+                            PaddingValues(
+                                start = 0.dp,
+                                top = innerPadding.calculateTopPadding(),
+                                end = innerPadding.calculateEndPadding(LocalLayoutDirection.current),
+                                bottom = innerPadding.calculateBottomPadding()
+                            )
+                        }
+
                     Conversation(
                         item = it,
-                        innerPadding = innerPadding
+                        innerPadding = detailPadding
                     )
                 }
             }
