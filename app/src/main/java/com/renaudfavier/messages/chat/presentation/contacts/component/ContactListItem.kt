@@ -1,4 +1,4 @@
-package com.renaudfavier.messages.chat.presentation.component
+package com.renaudfavier.messages.chat.presentation.contacts.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,7 +28,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
-import com.renaudfavier.messages.chat.presentation.ContactListItemUiModel
+import com.renaudfavier.messages.chat.presentation.contacts.model.ContactListItemUiModel
 import com.renaudfavier.messages.core.ui.theme.MessagesTheme
 
 @Composable

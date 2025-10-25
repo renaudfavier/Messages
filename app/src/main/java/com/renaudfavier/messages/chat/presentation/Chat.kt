@@ -12,7 +12,10 @@ import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaf
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import com.renaudfavier.messages.chat.presentation.component.sampleContacts
+import com.renaudfavier.messages.chat.presentation.contacts.model.ContactListUiModel
+import com.renaudfavier.messages.chat.presentation.contacts.Contacts
+import com.renaudfavier.messages.chat.presentation.contacts.component.sampleContacts
+import com.renaudfavier.messages.chat.presentation.conversation.Conversation
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 

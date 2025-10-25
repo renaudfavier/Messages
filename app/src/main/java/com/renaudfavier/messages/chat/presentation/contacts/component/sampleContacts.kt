@@ -1,7 +1,7 @@
-package com.renaudfavier.messages.chat.presentation.component
+package com.renaudfavier.messages.chat.presentation.contacts.component
 
 import com.renaudfavier.messages.R
-import com.renaudfavier.messages.chat.presentation.ContactListItemUiModel
+import com.renaudfavier.messages.chat.presentation.contacts.model.ContactListItemUiModel
 import kotlinx.collections.immutable.persistentListOf
 
 val sampleContacts = persistentListOf(

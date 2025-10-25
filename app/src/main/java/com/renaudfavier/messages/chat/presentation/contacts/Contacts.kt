@@ -1,4 +1,4 @@
-package com.renaudfavier.messages.chat.presentation
+package com.renaudfavier.messages.chat.presentation.contacts
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -22,8 +22,10 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
-import com.renaudfavier.messages.chat.presentation.component.ContactListItem
-import com.renaudfavier.messages.chat.presentation.component.sampleContacts
+import com.renaudfavier.messages.chat.presentation.ContactId
+import com.renaudfavier.messages.chat.presentation.contacts.component.ContactListItem
+import com.renaudfavier.messages.chat.presentation.contacts.component.sampleContacts
+import com.renaudfavier.messages.chat.presentation.contacts.model.ContactListUiModel
 import com.renaudfavier.messages.core.ui.theme.MessagesTheme
 
 @Composable
