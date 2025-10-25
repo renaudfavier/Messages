@@ -55,19 +55,14 @@ fun ConversationContactBadge(
                 contentScale = ContentScale.Crop
             )
 
-            Column(
+            Text(
+                text = name,
                 modifier = Modifier
-                    .padding(end = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                Text(
-                    text = name,
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.Bold,
-                    )
+                    .padding(end = 12.dp),
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.Bold,
                 )
-
-            }
+            )
         }
     }
 }

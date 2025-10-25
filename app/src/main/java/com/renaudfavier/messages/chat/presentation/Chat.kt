@@ -48,7 +48,10 @@ fun Chat(
         detailPane = {
             AnimatedPane {
                 scaffoldNavigator.currentDestination?.contentKey?.let {
-                    Conversation(it)
+                    Conversation(
+                        item = it,
+                        innerPadding = innerPadding
+                    )
                 }
             }
         },

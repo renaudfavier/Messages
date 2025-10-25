@@ -31,14 +31,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import com.renaudfavier.messages.R
 import com.renaudfavier.messages.core.ui.theme.MessagesTheme
 
 @Composable
 fun ConversationInputBar(
-    answer: String,
+    message: String,
     onAnswerChange: (String) -> Unit,
     onSendButtonTap: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -48,8 +49,8 @@ fun ConversationInputBar(
     var textFieldValue by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(
             TextFieldValue(
-                text = answer,
-                selection = TextRange(answer.length)
+                text = message,
+                selection = TextRange(message.length)
             )
         )
     }
@@ -77,7 +78,7 @@ fun ConversationInputBar(
                     )
                     ,
                 onClick = {
-                    onSendButtonTap(answer)
+                    onSendButtonTap(message)
                     focusRequester.freeFocus()
                 }
             ) {
@@ -96,7 +97,7 @@ fun ConversationInputBar(
         ),
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
         keyboardActions = KeyboardActions {
-            onSendButtonTap(answer)
+            onSendButtonTap(message)
             focusRequester.freeFocus()
         },
         modifier = modifier
@@ -105,7 +106,8 @@ fun ConversationInputBar(
     )
 }
 
-@Preview
+@PreviewLightDark
+@PreviewScreenSizes
 @Composable
 private fun InputBarPrev() {
     MessagesTheme {
@@ -114,17 +116,17 @@ private fun InputBarPrev() {
             modifier = Modifier.padding(16.dp)
         ) {
             ConversationInputBar(
-                answer = "so fasttttt",
+                message = "so fasttttt",
                 onAnswerChange = {},
                 onSendButtonTap = {},
             )
             ConversationInputBar(
-                answer = "",
+                message = "",
                 onAnswerChange = {},
                 onSendButtonTap = {},
             )
             ConversationInputBar(
-                answer = "Interface is operating with a small team of dedicated & talented people. We are looking for seasoned engineers with a deep technical knowledge, strong understanding of their technical stack, and excellent product intuitions to join our team.\n" +
+                message = "Interface is operating with a small team of dedicated & talented people. We are looking for seasoned engineers with a deep technical knowledge, strong understanding of their technical stack, and excellent product intuitions to join our team.\n" +
                         "\n" +
                         "This exercise has been designed to give a glimpse of what it is like to build a messaging app, and the kind of technical challenges we face",
                 onAnswerChange = {},
