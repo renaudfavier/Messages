@@ -16,6 +16,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -83,14 +85,15 @@ private fun Content(
 ) = with(uiModel) {
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
+    val isFirstComposition = remember { mutableStateOf(true) }
 
-    // Auto-scroll to newest message when messages change
     LaunchedEffect(messages.size) {
-        if (messages.isNotEmpty()) {
+        if (messages.isNotEmpty() && !isFirstComposition.value) {
             coroutineScope.launch {
                 listState.animateScrollToItem(0)
             }
         }
+        isFirstComposition.value = false
     }
 
     Box(modifier.padding(innerPadding)) {
