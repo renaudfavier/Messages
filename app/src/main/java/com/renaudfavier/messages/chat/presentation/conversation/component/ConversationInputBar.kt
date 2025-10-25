@@ -55,10 +55,6 @@ fun ConversationInputBar(
         )
     }
 
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-    }
-
     TextField(
         value = textFieldValue,
         onValueChange = {
