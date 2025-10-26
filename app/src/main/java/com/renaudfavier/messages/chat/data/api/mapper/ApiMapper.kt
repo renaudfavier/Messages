@@ -4,6 +4,7 @@ import com.renaudfavier.messages.R
 import com.renaudfavier.messages.chat.data.api.model.ChatDto
 import com.renaudfavier.messages.chat.data.api.model.MessageDto
 import com.renaudfavier.messages.chat.domain.Message
+import com.renaudfavier.messages.chat.domain.MessageId
 import com.renaudfavier.messages.core.domain.Contact
 import com.renaudfavier.messages.core.domain.toContactId
 import java.time.Instant

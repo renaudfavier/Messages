@@ -93,6 +93,11 @@ private fun Content(
     val coroutineScope = rememberCoroutineScope()
     val isFirstComposition = remember { mutableStateOf(true) }
 
+    // Mark messages as read when conversation is viewed
+    LaunchedEffect(uiModel.contactName) {
+        onAction(ConversationAction.ConversationViewed)
+    }
+
     LaunchedEffect(messages.size) {
         if (messages.isNotEmpty() && !isFirstComposition.value) {
             coroutineScope.launch {

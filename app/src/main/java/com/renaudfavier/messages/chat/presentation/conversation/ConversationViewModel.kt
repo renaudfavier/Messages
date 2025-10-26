@@ -64,8 +64,6 @@ class ConversationViewModel @AssistedInject constructor(
     private fun loadData() = viewModelScope.launch {
         _uiState.value = UiModel.Loading
 
-        readAllMessagesUseCase.execute(contactId)
-
         val contact = contactRepository.getContact(contactId).getOrNull()
         if (contact == null) {
             _uiState.value = UiModel.Error("Contact not found")
@@ -98,8 +96,9 @@ class ConversationViewModel @AssistedInject constructor(
     fun onAction(action : ConversationAction) = when(action) {
         is ConversationAction.MessageChanged -> onMessageChanged(action)
         is ConversationAction.SendMessage -> onSendMessage(action)
+        ConversationAction.ConversationViewed -> onConversationViewed()
         ConversationAction.Retry -> onRetry()
-    }.also { println(action) }
+    }.also { println("onAction : $action") }
 
     private fun onMessageChanged(action: ConversationAction.MessageChanged) {
         val state = _uiState.value as? UiModel.Content ?: return
@@ -119,6 +118,10 @@ class ConversationViewModel @AssistedInject constructor(
         }
 
         messageRepository.sendMessage(id =  contactId.id, text = action.message)
+    }
+
+    private fun onConversationViewed() = viewModelScope.launch {
+        readAllMessagesUseCase.execute(contactId)
     }
 
     private fun onRetry() = viewModelScope.launch {

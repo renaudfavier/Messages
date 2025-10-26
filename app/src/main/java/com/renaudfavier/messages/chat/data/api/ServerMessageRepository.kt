@@ -137,14 +137,14 @@ class ServerMessageRepository @Inject constructor(
         }
     }
 
-    override suspend fun messageWasRead(id: MessageId): Result<Unit> {
-        // Update message in cache to mark as read
+    override suspend fun chatWasRead(id: ContactId): Result<Unit> {
         messagesCache.update { cache ->
-            val message = cache[id]
-            if (message != null) {
-                cache + (id to message.copy(isUnread = false))
-            } else {
-                cache
+            cache.mapValues { (_, message) ->
+                if (message.author == id && message.isUnread) {
+                    message.copy(isUnread = false)
+                } else {
+                    message
+                }
             }
         }
         return Result.success(Unit)
