@@ -2,6 +2,10 @@
 
 Android messaging application built for the Interface engineering challenge. Implements a clean, modern chat interface with focus on architecture, UX polish, and adaptive design.
 
+<img width="595" height="600" alt="image" src="https://github.com/user-attachments/assets/95a31763-7589-4c0e-88bf-bab9255cc742" /> <img width="282" height="600" alt="image" src="https://github.com/user-attachments/assets/7d1e9412-9e45-4293-83bc-a4bc08dc8bed" />
+
+
+
 ## Tech Stack
 
 - **UI**: Jetpack Compose with Material 3 (including Adaptive components for large screens)
