@@ -112,7 +112,7 @@ class ConversationViewModel @AssistedInject constructor(
         messageRepository.sendMessage(
             Message(
                 id = Random.nextInt(),
-                author = 0.toContactId(),
+                author = "user".toContactId(),
                 recipient = contactId,
                 date = Instant.now(),
                 content = action.message,

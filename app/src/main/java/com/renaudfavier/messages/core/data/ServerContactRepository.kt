@@ -20,8 +20,8 @@ class ServerContactRepository @Inject constructor(
     private val contactsCache = mutableMapOf<ContactId, Contact>()
 
     override suspend fun getMyId(): Result<ContactId> {
-        // User is always ID 0 in this system
-        return Result.success(0.toContactId())
+        // User is always "user" in this system
+        return Result.success("user".toContactId())
     }
 
     override suspend fun getContact(id: ContactId): Result<Contact> {

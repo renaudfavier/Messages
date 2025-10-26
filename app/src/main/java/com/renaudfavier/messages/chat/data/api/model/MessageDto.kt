@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 data class MessageDto(
     val id: Int,
     @SerialName("chat_id")
-    val chatId: Int,
+    val chatId: String,
     val author: String, // "user" or "bot"
     val text: String,
     @SerialName("sent_at")

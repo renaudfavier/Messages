@@ -57,7 +57,7 @@ class ServerMessageRepository @Inject constructor(
 
     override fun getAllConversations(): Flow<List<ContactId>> {
         return messagesCache.map { cache ->
-            val currentUserId = 0
+            val currentUserId = "user"
             cache.values
                 .flatMap { listOf(it.author, it.recipient) }
                 .filter { it.id != currentUserId }

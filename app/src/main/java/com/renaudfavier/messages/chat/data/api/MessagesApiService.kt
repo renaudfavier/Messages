@@ -16,12 +16,12 @@ interface MessagesApiService {
 
     @GET("/chats/{chat_id}/messages")
     suspend fun getMessages(
-        @Path("chat_id") chatId: Int
+        @Path("chat_id") chatId: String
     ): List<MessageDto>
 
     @POST("/chats/{chat_id}/messages")
     suspend fun sendMessage(
-        @Path("chat_id") chatId: Int,
+        @Path("chat_id") chatId: String,
         @Header("Idempotency-Key") idempotencyKey: String,
         @Body request: SendMessageRequest
     ): MessageDto

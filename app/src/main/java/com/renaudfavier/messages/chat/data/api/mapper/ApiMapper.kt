@@ -21,7 +21,7 @@ class ApiMapper @Inject constructor() {
     }
 
     fun mapMessage(messageDto: MessageDto): Message {
-        val currentUserId = 0.toContactId() // User is always ID 0
+        val currentUserId = "user".toContactId()
         val isFromUser = messageDto.author == "user"
 
         return Message(
