@@ -8,7 +8,7 @@ interface MessageRepository {
     fun getAllConversations(): Flow<List<ContactId>>
     fun getConversationFlow(contactId: ContactId): Flow<List<Message>>
 
-    suspend fun sendMessage(message: Message): Result<Unit>
+    suspend fun sendMessage(id: String, text: String): Result<Unit>
     suspend fun messageWasRead(id: MessageId): Result<Unit>
 
 }

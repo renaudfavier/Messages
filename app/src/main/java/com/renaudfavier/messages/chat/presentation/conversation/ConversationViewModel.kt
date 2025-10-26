@@ -109,17 +109,6 @@ class ConversationViewModel @AssistedInject constructor(
     private fun onSendMessage(action: ConversationAction.SendMessage) = viewModelScope.launch {
         if (action.message.isBlank()) return@launch
 
-        messageRepository.sendMessage(
-            Message(
-                id = Random.nextInt().toString(),
-                author = "user".toContactId(),
-                recipient = contactId,
-                date = Instant.now(),
-                content = action.message,
-                isUnread = false
-            )
-        )
-
         // Clear the message input after sending
         _uiState.update { state ->
             if (state is UiModel.Content) {
@@ -128,6 +117,8 @@ class ConversationViewModel @AssistedInject constructor(
                 state
             }
         }
+
+        messageRepository.sendMessage(id =  contactId.id, text = action.message)
     }
 
     private fun onRetry() = viewModelScope.launch {

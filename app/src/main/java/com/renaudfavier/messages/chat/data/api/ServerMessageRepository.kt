@@ -112,14 +112,14 @@ class ServerMessageRepository @Inject constructor(
         }
     }
 
-    override suspend fun sendMessage(message: Message): Result<Unit> {
+    override suspend fun sendMessage(id: String, text: String): Result<Unit> {
         val idempotencyKey = UUID.randomUUID().toString()
 
         return retryWithExponentialBackoff(maxRetries = 3) {
             try {
-                val request = SendMessageRequest(text = message.content)
+                val request = SendMessageRequest(text = text)
                 val responseDto = apiService.sendMessage(
-                    chatId = message.recipient.id,
+                    chatId = id,
                     idempotencyKey = idempotencyKey,
                     request = request
                 )

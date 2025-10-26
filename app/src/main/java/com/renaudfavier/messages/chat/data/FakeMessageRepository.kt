@@ -9,6 +9,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import kotlin.random.Random
+import java.time.Instant
 
 class FakeMessageRepository @Inject constructor(): MessageRepository {
 
@@ -40,7 +42,16 @@ class FakeMessageRepository @Inject constructor(): MessageRepository {
         }
     }
 
-    override suspend fun sendMessage(message: Message): Result<Unit> {
+    override suspend fun sendMessage(id: String, text: String): Result<Unit> {
+        val message = Message(
+            id = Random.nextInt().toString(),
+            author = "user".toContactId(),
+            recipient = id.toContactId(),
+            date = Instant.now(),
+            content = text,
+            isUnread = false
+        )
+
         messages.value = messages.value + message
         return Result.success(Unit)
     }
