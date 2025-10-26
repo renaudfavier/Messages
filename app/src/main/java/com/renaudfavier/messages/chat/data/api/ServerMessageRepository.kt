@@ -6,18 +6,17 @@ import com.renaudfavier.messages.chat.domain.Message
 import com.renaudfavier.messages.chat.domain.MessageId
 import com.renaudfavier.messages.chat.domain.MessageRepository
 import com.renaudfavier.messages.core.domain.ContactId
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
@@ -113,28 +112,28 @@ class ServerMessageRepository @Inject constructor(
     }
 
     override suspend fun sendMessage(id: String, text: String): Result<Unit> {
-        val idempotencyKey = UUID.randomUUID().toString()
+        try {
+            val idempotencyKey = UUID.randomUUID().toString()
+            val request = SendMessageRequest(text = text)
 
-        return retryWithExponentialBackoff(maxRetries = 3) {
-            try {
-                val request = SendMessageRequest(text = text)
-                val responseDto = apiService.sendMessage(
+            val responseDto = withExponentialBackoff {
+                apiService.sendMessage(
                     chatId = id,
                     idempotencyKey = idempotencyKey,
                     request = request
                 )
-
-                // Add sent message to cache immediately (optimistic update)
-                val mappedMessage = apiMapper.mapMessage(responseDto)
-                messagesCache.update { cache ->
-                    cache + (mappedMessage.id to mappedMessage)
-                }
-
-                Result.success(Unit)
-            } catch (e: Exception) {
-                Result.failure(e)
             }
-        }
+
+            val mappedMessage = apiMapper.mapMessage(responseDto)
+            messagesCache.update { cache ->
+                cache + (mappedMessage.id to mappedMessage)
+            }
+
+            return Result.success(Unit)
+
+            } catch (e: Exception) {
+                return Result.failure(e)
+            }
     }
 
     override suspend fun chatWasRead(id: ContactId): Result<Unit> {
@@ -151,30 +150,37 @@ class ServerMessageRepository @Inject constructor(
     }
 
     private suspend fun loadChatsFromServer() {
-        try {
-            val chats = apiService.getChats()
-            // Load messages for each chat
-            chats.forEach { chat ->
+        withExponentialBackoff { apiService.getChats() }.forEach { chat ->
+            try {
                 loadMessagesForChat(chat.id)
+            } catch (e: Exception) {
+                // Continue loading other chats even if one fails
+                println("Failed to load messages for chat ${chat.id}: ${e.message}")
             }
-        } catch (e: Exception) {
-            // Silently fail - will retry through flow retry logic
         }
     }
 
-    private suspend fun loadMessagesForChat(chatId: Int) {
+    private suspend fun loadMessagesForChat(chatId: String) {
+        val messageDtos = withExponentialBackoff { apiService.getMessages(chatId) }
+
+        messagesCache.update { cache ->
+            val messages = messageDtos
+                .filter { it.id !in cache } // skip already cached ones
+                .map { apiMapper.mapMessage(it) }
+                .associateBy { it.id }
+
+            cache + messages
+        }
+    }
+
+    suspend fun <T> withExponentialBackoff(block: suspend () -> T) = retryWithExponentialBackoff(maxRetries = 5) {
         try {
-            val messageDtos = apiService.getMessages(chatId)
-            val messages = messageDtos.map { apiMapper.mapMessage(it) }
-
-            // Add all messages to cache (deduplicated by ID)
-            messagesCache.update { cache ->
-                cache + messages.associateBy { it.id }
-            }
+            val res = block()
+            Result.success(res)
         } catch (e: Exception) {
-            // Silently fail - SSE will eventually provide messages
+            Result.failure(e)
         }
-    }
+    }.getOrThrow()
 
     private suspend fun <T> retryWithExponentialBackoff(
         maxRetries: Int,
