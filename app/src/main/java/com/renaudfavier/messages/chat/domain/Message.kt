@@ -3,7 +3,7 @@ package com.renaudfavier.messages.chat.domain
 import com.renaudfavier.messages.core.domain.ContactId
 import java.time.Instant
 
-typealias MessageId = Int
+typealias MessageId = String
 
 data class Message(
     val id: MessageId,

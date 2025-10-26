@@ -30,7 +30,7 @@ class ServerMessageRepository @Inject constructor(
 ) : MessageRepository {
 
     // In-memory cache of messages with deduplication
-    private val messagesCache = MutableStateFlow<Map<Int, Message>>(emptyMap())
+    private val messagesCache = MutableStateFlow<Map<MessageId, Message>>(emptyMap())
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     init {
