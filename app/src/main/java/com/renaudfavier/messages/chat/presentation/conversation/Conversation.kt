@@ -110,7 +110,8 @@ private fun Content(
     Box(modifier.padding(innerPadding)) {
         Column(Modifier.fillMaxSize()) {
             ConversationMessageList(
-                messages,
+                items = messages,
+                onListTap = { onAction(ConversationAction.ConversationViewed) },
                 listState = listState,
                 modifier = Modifier
                     .weight(1f)
