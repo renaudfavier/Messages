@@ -87,8 +87,28 @@ class ServerMessageRepository @Inject constructor(
                 .filter { it.author == contactId || it.recipient == contactId }
                 .sortedBy { it.date }
         }.onStart {
-            // Load messages for this chat from server
-            loadMessagesForChat(contactId.id)
+            // Try to load fresh messages from server with retry
+            var currentDelay = 500L
+            var attempt = 0
+            var success = false
+
+            while (attempt < 5 && !success) {
+                try {
+                    loadMessagesForChat(contactId.id)
+                    success = true
+                } catch (e: Exception) {
+                    println("Failed to load messages for chat ${contactId.id} (attempt ${attempt + 1}): ${e.message}")
+                    if (attempt < 4) {
+                        delay(currentDelay)
+                        currentDelay *= 2 // Exponential backoff
+                        attempt++
+                    } else {
+                        // Final attempt failed - log but continue with cached data
+                        println("All retry attempts exhausted for chat ${contactId.id}")
+                        break
+                    }
+                }
+            }
         }
     }
 
