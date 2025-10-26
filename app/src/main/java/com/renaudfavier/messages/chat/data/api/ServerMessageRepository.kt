@@ -125,7 +125,10 @@ class ServerMessageRepository @Inject constructor(
     private suspend fun loadChatsFromServer() {
         try {
             val chats = apiService.getChats()
-            // Chats are loaded, we'll get messages via SSE or individual chat loads
+            // Load messages for each chat
+            chats.forEach { chat ->
+                loadMessagesForChat(chat.id)
+            }
         } catch (e: Exception) {
             // Silently fail - will retry through flow retry logic
         }
