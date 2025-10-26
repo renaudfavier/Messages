@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.retry
+import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -68,8 +69,15 @@ class ServerMessageRepository @Inject constructor(
                         .maxOfOrNull { it.date }
                 }
         }.onStart {
-            // Load initial data from server
             loadChatsFromServer()
+        }.retryWhen { cause, attempt ->
+            if (attempt < 5) {
+                val delayTime = 500L * (1 shl attempt.toInt()) // Exponential backoff: 500ms, 1s, 2s
+                delay(delayTime)
+                true
+            } else {
+                false
+            }
         }
     }
 
