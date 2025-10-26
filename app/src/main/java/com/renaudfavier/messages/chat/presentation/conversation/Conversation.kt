@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.renaudfavier.messages.R
+import com.renaudfavier.messages.chat.presentation.contacts.model.ContactListAction
 import com.renaudfavier.messages.chat.presentation.conversation.component.ConversationContactBadge
 import com.renaudfavier.messages.chat.presentation.conversation.component.ConversationInputBar
 import com.renaudfavier.messages.chat.presentation.conversation.component.ConversationMessageList
@@ -34,6 +35,7 @@ import com.renaudfavier.messages.chat.presentation.conversation.component.sample
 import com.renaudfavier.messages.chat.presentation.conversation.model.ConversationAction
 import com.renaudfavier.messages.chat.presentation.conversation.model.ConversationUiModel
 import com.renaudfavier.messages.core.domain.ContactId
+import com.renaudfavier.messages.core.presentation.ErrorBox
 import com.renaudfavier.messages.core.ui.theme.MessagesTheme
 import kotlinx.coroutines.launch
 
@@ -72,7 +74,11 @@ private fun Conversation(
     when(uiModel) {
         is ConversationUiModel.Content -> Content(uiModel, onAction, innerPadding, modifier)
         ConversationUiModel.Loading -> Loading(modifier = modifier)
-        is ConversationUiModel.Error -> Text(uiModel.message)
+        is ConversationUiModel.Error -> ErrorBox(
+            message = uiModel.message,
+            modifier = modifier,
+            onRetry = { onAction(ConversationAction.Retry) }
+        )
     }
 }
 

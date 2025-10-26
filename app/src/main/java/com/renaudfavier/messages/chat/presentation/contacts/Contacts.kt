@@ -29,7 +29,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.renaudfavier.messages.core.domain.ContactId
 import com.renaudfavier.messages.chat.presentation.contacts.component.ContactListItem
 import com.renaudfavier.messages.chat.presentation.contacts.component.sampleContactsListItemUiModel
+import com.renaudfavier.messages.chat.presentation.contacts.model.ContactListAction
 import com.renaudfavier.messages.chat.presentation.contacts.model.ContactListUiModel
+import com.renaudfavier.messages.core.presentation.ErrorBox
 import com.renaudfavier.messages.core.ui.theme.MessagesTheme
 
 @Composable
@@ -44,6 +46,7 @@ fun Contacts(
 
     Contacts(
         uiModel = uiModel,
+        onAction = viewModel::onAction,
         onContactClick = { onItemClick(it) },
         innerPadding,
         modifier
@@ -53,6 +56,7 @@ fun Contacts(
 @Composable
 private fun Contacts(
     uiModel: ContactListUiModel,
+    onAction: (ContactListAction) -> Unit,
     onContactClick: (ContactId) -> Unit,
     innerPadding: PaddingValues,
     modifier: Modifier = Modifier,
@@ -60,7 +64,11 @@ private fun Contacts(
     when (uiModel) {
         is ContactListUiModel.Content -> Content(uiModel, onContactClick, innerPadding, modifier)
         ContactListUiModel.Loading -> Loading(modifier)
-        is ContactListUiModel.Error -> Text(uiModel.message)
+        is ContactListUiModel.Error -> ErrorBox(
+            message = uiModel.message,
+            modifier = modifier,
+            onRetry = { onAction(ContactListAction.Retry) }
+        )
     }
 }
 
