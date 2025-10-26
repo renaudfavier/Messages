@@ -6,16 +6,17 @@ import com.renaudfavier.messages.chat.domain.Message
 import com.renaudfavier.messages.chat.domain.MessageId
 import com.renaudfavier.messages.chat.domain.MessageRepository
 import com.renaudfavier.messages.core.domain.ContactId
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
@@ -28,31 +29,41 @@ class ServerMessageRepository @Inject constructor(
     private val apiMapper: ApiMapper
 ) : MessageRepository {
 
-    // In-memory cache of messages with deduplication
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        println("SSE: Uncaught exception in repository scope: ${throwable.message}")
+        throwable.printStackTrace()
+    }
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO + exceptionHandler)
     private val messagesCache = MutableStateFlow<Map<MessageId, Message>>(emptyMap())
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val seenMessageIds = mutableSetOf<String>()
 
     init {
-        // Start listening to SSE stream and update cache
         observeServerEvents()
+
+        scope.launch {
+            try {
+                loadChatsFromServer()
+                seenMessageIds.addAll(messagesCache.value.keys)
+            } catch (e: Exception) {
+                println("Failed to load chats on init: ${e.message}")
+            }
+        }
     }
 
     private fun observeServerEvents() {
         scope.launch {
-            eventStream.observeMessages()
-                .retryWhen { cause, attempt ->
-                    if(attempt > 10) false
-                    else {
-                        delay(100 * attempt * attempt)
-                        true
-                    }
+            while (scope.isActive) {
+                try {
+                    eventStream.observeMessages(seenMessageIds)
+                        .collect { message ->
+                            messagesCache.update { cache ->
+                                cache + (message.id to message)
+                            }
+                        }
+                } catch (e: Exception) {
+                    println("Silently crash: ${e.message}, reconnecting")
                 }
-                .collect { message ->
-                    // Add or update message in cache (deduplication by ID)
-                    messagesCache.update { cache ->
-                        cache + (message.id to message)
-                    }
-                }
+            }
         }
     }
 
@@ -68,8 +79,6 @@ class ServerMessageRepository @Inject constructor(
                         .filter { it.author == contactId || it.recipient == contactId }
                         .maxOfOrNull { it.date }
                 }
-        }.onStart {
-            loadChatsFromServer()
         }
     }
 
@@ -78,12 +87,10 @@ class ServerMessageRepository @Inject constructor(
             cache.values
                 .filter { it.author == contactId || it.recipient == contactId }
                 .sortedBy { it.date }
-        }.onStart {
-            loadMessagesForChat(contactId.id)
         }
     }
 
-    override suspend fun sendMessage(id: String, text: String): Result<Unit> {
+    override suspend fun sendMessage(id: String, text: String): Result<Unit> = scope.async {
         try {
             val idempotencyKey = UUID.randomUUID().toString()
             val request = SendMessageRequest(text = text)
@@ -101,12 +108,11 @@ class ServerMessageRepository @Inject constructor(
                 cache + (mappedMessage.id to mappedMessage)
             }
 
-            return Result.success(Unit)
-
-            } catch (e: Exception) {
-                return Result.failure(e)
-            }
-    }
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }.await()
 
     override suspend fun chatWasRead(id: ContactId): Result<Unit> {
         messagesCache.update { cache ->

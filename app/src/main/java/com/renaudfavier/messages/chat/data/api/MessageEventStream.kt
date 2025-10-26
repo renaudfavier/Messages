@@ -22,7 +22,7 @@ class MessageEventStream @Inject constructor(
     private val baseUrl: String
 ) {
 
-    fun observeMessages(): Flow<Message> = callbackFlow {
+    fun observeMessages(seenMessageIds: MutableSet<String>): Flow<Message> = callbackFlow {
         val request = Request.Builder()
             .url("$baseUrl/events?stream=messages")
             .build()
@@ -40,6 +40,11 @@ class MessageEventStream @Inject constructor(
             ) {
                 try {
                     val messageDto = json.decodeFromString<MessageDto>(data)
+
+                    // Skip if already seen
+                    if (messageDto.id in seenMessageIds) return
+                    else seenMessageIds.add(messageDto.id)
+
                     val message = apiMapper.mapMessage(messageDto)
                     trySend(message)
                 } catch (e: Exception) {
