@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -41,10 +40,12 @@ class ServerMessageRepository @Inject constructor(
     private fun observeServerEvents() {
         scope.launch {
             eventStream.observeMessages()
-                .retry(retries = Long.MAX_VALUE) { cause ->
-                    // Retry on any error with exponential backoff
-                    delay(2000)
-                    true
+                .retryWhen { cause, attempt ->
+                    if(attempt > 10) false
+                    else {
+                        delay(100 * attempt * attempt)
+                        true
+                    }
                 }
                 .collect { message ->
                     // Add or update message in cache (deduplication by ID)
@@ -69,14 +70,6 @@ class ServerMessageRepository @Inject constructor(
                 }
         }.onStart {
             loadChatsFromServer()
-        }.retryWhen { cause, attempt ->
-            if (attempt < 5) {
-                val delayTime = 500L * (1 shl attempt.toInt()) // Exponential backoff: 500ms, 1s, 2s
-                delay(delayTime)
-                true
-            } else {
-                false
-            }
         }
     }
 
@@ -86,28 +79,7 @@ class ServerMessageRepository @Inject constructor(
                 .filter { it.author == contactId || it.recipient == contactId }
                 .sortedBy { it.date }
         }.onStart {
-            // Try to load fresh messages from server with retry
-            var currentDelay = 500L
-            var attempt = 0
-            var success = false
-
-            while (attempt < 5 && !success) {
-                try {
-                    loadMessagesForChat(contactId.id)
-                    success = true
-                } catch (e: Exception) {
-                    println("Failed to load messages for chat ${contactId.id} (attempt ${attempt + 1}): ${e.message}")
-                    if (attempt < 4) {
-                        delay(currentDelay)
-                        currentDelay *= 2 // Exponential backoff
-                        attempt++
-                    } else {
-                        // Final attempt failed - log but continue with cached data
-                        println("All retry attempts exhausted for chat ${contactId.id}")
-                        break
-                    }
-                }
-            }
+            loadMessagesForChat(contactId.id)
         }
     }
 
