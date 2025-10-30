@@ -23,13 +23,13 @@ class ConversationListItemMapper @Inject constructor() {
     private fun mapMessage(message: Message) =
         ConversationListItemUiModel.MessageUiModel.TextMessage(
             id = "${message.id}",
-            isMine = message.author == 0.toContactId(),
+            isMine = message.author == "user".toContactId(),
             text = message.content,
         )
     private fun mapEmoji(message: Message) =
         ConversationListItemUiModel.MessageUiModel.EmojiMessage(
             id = "${message.id}",
-            isMine = message.author == 0.toContactId(),
+            isMine = message.author == "user".toContactId(),
             emoji = message.content,
         )
 

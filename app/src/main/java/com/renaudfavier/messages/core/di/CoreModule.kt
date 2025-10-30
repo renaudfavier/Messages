@@ -1,6 +1,6 @@
 package com.renaudfavier.messages.core.di
 
-import com.renaudfavier.messages.core.data.FakeContactRepository
+import com.renaudfavier.messages.core.data.ServerContactRepository
 import com.renaudfavier.messages.core.domain.ContactRepository
 import dagger.Binds
 import dagger.Module
@@ -14,5 +14,5 @@ interface CoreModule {
 
     @Singleton
     @Binds
-    fun bindContactRepository(fake: FakeContactRepository): ContactRepository
+    fun bindContactRepository(server: ServerContactRepository): ContactRepository
 }

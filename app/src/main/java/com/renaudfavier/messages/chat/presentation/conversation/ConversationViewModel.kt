@@ -2,7 +2,6 @@ package com.renaudfavier.messages.chat.presentation.conversation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.renaudfavier.messages.R
 import com.renaudfavier.messages.chat.domain.Message
 import com.renaudfavier.messages.chat.domain.MessageRepository
 import com.renaudfavier.messages.chat.domain.ReadAllMessagesUseCase
@@ -16,22 +15,23 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.Instant
-import java.time.LocalDate
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import kotlin.random.Random
-import com.renaudfavier.messages.chat.presentation.conversation.model.ConversationListItemUiModel
 import com.renaudfavier.messages.chat.presentation.conversation.model.ConversationUiModel as UiModel
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel(assistedFactory = ConversationViewModel.Factory::class)
 class ConversationViewModel @AssistedInject constructor(
     @Assisted private val contactId: ContactId,
@@ -46,9 +46,15 @@ class ConversationViewModel @AssistedInject constructor(
         fun create(chatId: ContactId): ConversationViewModel
     }
 
+    private val retryTrigger = MutableSharedFlow<Unit>(replay = 1).apply {
+        tryEmit(Unit) // Initial load
+    }
+
     private val _uiState = MutableStateFlow<UiModel>(UiModel.Loading)
-    val uiState = _uiState
-        .onStart { loadData() }
+    val uiState = retryTrigger
+        .flatMapLatest {
+            _uiState.onStart { loadData() }
+        }
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000L),
@@ -56,7 +62,7 @@ class ConversationViewModel @AssistedInject constructor(
         )
 
     private fun loadData() = viewModelScope.launch {
-        readAllMessagesUseCase.execute(contactId)
+        _uiState.value = UiModel.Loading
 
         val contact = contactRepository.getContact(contactId).getOrNull()
         if (contact == null) {
@@ -90,36 +96,35 @@ class ConversationViewModel @AssistedInject constructor(
     fun onAction(action : ConversationAction) = when(action) {
         is ConversationAction.MessageChanged -> onMessageChanged(action)
         is ConversationAction.SendMessage -> onSendMessage(action)
-    }.also { println(action) }
+        ConversationAction.ConversationViewed -> onConversationViewed()
+        ConversationAction.Retry -> onRetry()
+    }.also { println("onAction : $action") }
 
     private fun onMessageChanged(action: ConversationAction.MessageChanged) {
         val state = _uiState.value as? UiModel.Content ?: return
         _uiState.update { state.copy(message = action.message) }
     }
 
-    private fun onSendMessage(action: ConversationAction.SendMessage) {
-        if (action.message.isBlank()) return
+    private fun onSendMessage(action: ConversationAction.SendMessage) = viewModelScope.launch {
+        if (action.message.isBlank()) return@launch
 
-        viewModelScope.launch {
-            messageRepository.sendMessage(
-                Message(
-                    id = Random.nextInt(),
-                    author = 0.toContactId(),
-                    recipient = contactId,
-                    date = Instant.now(),
-                    content = action.message,
-                    isUnread = false
-                )
-            )
-
-            // Clear the message input after sending
-            _uiState.update { state ->
-                if (state is UiModel.Content) {
-                    state.copy(message = "")
-                } else {
-                    state
-                }
+        // Clear the message input after sending
+        _uiState.update { state ->
+            if (state is UiModel.Content) {
+                state.copy(message = "")
+            } else {
+                state
             }
         }
+
+        messageRepository.sendMessage(id =  contactId.id, text = action.message)
+    }
+
+    private fun onConversationViewed() = viewModelScope.launch {
+        readAllMessagesUseCase.execute(contactId)
+    }
+
+    private fun onRetry() = viewModelScope.launch {
+        retryTrigger.emit(Unit)
     }
 }

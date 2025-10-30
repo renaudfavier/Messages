@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.renaudfavier.messages.R
+import com.renaudfavier.messages.chat.presentation.contacts.model.ContactListAction
 import com.renaudfavier.messages.chat.presentation.conversation.component.ConversationContactBadge
 import com.renaudfavier.messages.chat.presentation.conversation.component.ConversationInputBar
 import com.renaudfavier.messages.chat.presentation.conversation.component.ConversationMessageList
@@ -34,6 +35,7 @@ import com.renaudfavier.messages.chat.presentation.conversation.component.sample
 import com.renaudfavier.messages.chat.presentation.conversation.model.ConversationAction
 import com.renaudfavier.messages.chat.presentation.conversation.model.ConversationUiModel
 import com.renaudfavier.messages.core.domain.ContactId
+import com.renaudfavier.messages.core.presentation.ErrorBox
 import com.renaudfavier.messages.core.ui.theme.MessagesTheme
 import kotlinx.coroutines.launch
 
@@ -72,7 +74,11 @@ private fun Conversation(
     when(uiModel) {
         is ConversationUiModel.Content -> Content(uiModel, onAction, innerPadding, modifier)
         ConversationUiModel.Loading -> Loading(modifier = modifier)
-        is ConversationUiModel.Error -> Text(uiModel.message)
+        is ConversationUiModel.Error -> ErrorBox(
+            message = uiModel.message,
+            modifier = modifier,
+            onRetry = { onAction(ConversationAction.Retry) }
+        )
     }
 }
 
@@ -87,6 +93,11 @@ private fun Content(
     val coroutineScope = rememberCoroutineScope()
     val isFirstComposition = remember { mutableStateOf(true) }
 
+    // Mark messages as read when conversation is viewed
+    LaunchedEffect(uiModel.contactName) {
+        onAction(ConversationAction.ConversationViewed)
+    }
+
     LaunchedEffect(messages.size) {
         if (messages.isNotEmpty() && !isFirstComposition.value) {
             coroutineScope.launch {
@@ -99,7 +110,8 @@ private fun Content(
     Box(modifier.padding(innerPadding)) {
         Column(Modifier.fillMaxSize()) {
             ConversationMessageList(
-                messages,
+                items = messages,
+                onListTap = { onAction(ConversationAction.ConversationViewed) },
                 listState = listState,
                 modifier = Modifier
                     .weight(1f)
